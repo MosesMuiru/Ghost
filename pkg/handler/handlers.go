@@ -3,12 +3,15 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
 )
 
 type BookRideRequest struct {
-	UserId string `json:"user_id"`
-	Book   bool   `json:"book"`
+	UserId   string `json:"user_id"`
+	RidersId string `json:"riders_Id"`
+	Book     bool   `json:"book"`
 }
 
 type Start struct {
@@ -65,4 +68,39 @@ func RequestEncoder[T any](w http.ResponseWriter, r *http.Request, status int, v
 		return fmt.Errorf("encode json: %w", err)
 	}
 	return nil
+}
+
+type WebSocketHandler struct{}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin:     func(r *http.Request) bool { return true },
+}
+
+func WebSocketApi(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println("Error upgrading", err)
+		return
+	}
+
+	defer conn.Close()
+
+	// listen for incoming locations sent
+	for {
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("Buda hii websocket imestop:---> %v", err)
+			}
+
+		}
+		fmt.Println("This is the message----> ", message)
+
+		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			fmt.Println("Error writing message:", err)
+			break
+		}
+	}
 }

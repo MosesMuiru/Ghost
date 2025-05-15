@@ -1,6 +1,8 @@
 package services
 
-import "github.com/ghost/pkg/handler"
+import (
+	"github.com/ghost/pkg/handler"
+)
 
 // this will be streaming the location of the rider
 // if the set location is trur then the rider is streamed
@@ -20,7 +22,8 @@ func NewDetails() *any {
 }
 
 func StreamLocation(booked bool, rider_id string) {
-	v := handler.CUSTOMERDATA()
+	//	v := handler.CUSTOMERDATA()
+	///	ridersChannel := make(chan RidersData)
 
 	// create a channel tunnel where the infomation of the user can flow easily
 	// we need to make sure that the rider and the customer are linked well
@@ -33,9 +36,9 @@ func StreamLocation(booked bool, rider_id string) {
 	// through a channel ---location will be streamed to the customer-----
 
 	// check if the rider is already in another ride or free
-	isFree := IfRiderIsFree(rider_id)
+	//isFree := IfRiderIsFree(rider_id)
 
-	RidersData := make(chan RidersData)
+	//RidersData := make(chan RidersData)
 
 	// from here i can pass to
 

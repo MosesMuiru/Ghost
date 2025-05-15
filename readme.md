@@ -33,3 +33,9 @@ riders must maybe click on a button to report for work
 ### still brain storming how i should impement this
 
 # If you are outthere and have an idea of how i can implement a streamin service for my own, please healp
+
+    user1 -----------connections---------------> client1
+    <------------ there is connection that has been created
+
+
+
