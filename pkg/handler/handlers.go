@@ -70,7 +70,10 @@ func RequestEncoder[T any](w http.ResponseWriter, r *http.Request, status int, v
 	return nil
 }
 
-type WebSocketHandler struct{}
+type Message struct {
+	Log string `json:"log"`
+	Lat string `json:"lat"`
+}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -87,8 +90,11 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 
 	defer conn.Close()
 
+	messages := Message{}
+
 	// listen for incoming locations sent
 	for {
+		// this message is the location of the driver right
 		_, message, err := conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -96,7 +102,13 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}
-		fmt.Println("This is the message----> ", message)
+
+		// destructure the message
+		err = json.Unmarshal(message, &messages)
+		if err != nil {
+			fmt.Println("This is not working could no unmarshel", err)
+		}
+		fmt.Println("This is the message-lattitue---> ", messages.Lat)
 
 		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			fmt.Println("Error writing message:", err)
